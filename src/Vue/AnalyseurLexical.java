@@ -29,7 +29,7 @@ public class AnalyseurLexical {
 		int i=1;
 		for (String line : str.split("\\n"))
 		{
-			
+			//tab.add(new ArrayList<String>());
 			motLit.add(new ArrayList<Symbole>());
 			
 			for(String mot : line.split(" "))
