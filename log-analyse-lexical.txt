@@ -1,0 +1,7 @@
+ID= [xx, x, c]
+NB= [1, 5, 6]
+MotCle= [program, ;, var, :, integer, char, begin, if, then, :=, else, end, .]
+OPREL= [==]
+OPADD= [+]
+OPMUL= []
+
