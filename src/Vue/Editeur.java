@@ -70,8 +70,8 @@ public class Editeur implements ActionListener,KeyListener{
 		cle.add("-");
 		cle.add("/");
 		cle.add("%");
-		cle.add("<");
-		cle.add(">");
+		//cle.add("<");
+		//cle.add(">");
 		cle.add(",");
 		
 		cle.add(":=");
@@ -126,12 +126,37 @@ public class Editeur implements ActionListener,KeyListener{
 				String str2 = mot.substring(i+1, mot.length());
 				mot = str1 +" "+str2;
 			}
-			if(mot.charAt(i) == ':' && mot.charAt(i-1) != '=' && mot.charAt(i-1) != ' ')
+			if(mot.charAt(i) == ':' && mot.charAt(i+1) != '=' && mot.charAt(i-1) != ' ')
 			{
 				String str1 = mot.substring(0, i);
 				String str2 = mot.substring(i, mot.length());
 				mot = str1 +" "+str2;
 			}
+			if(mot.charAt(i) == '>' && mot.charAt(i+1) != '=' && mot.charAt(i-1) != '<' && mot.charAt(i+1) != ' ')
+			{
+				String str1 = mot.substring(0, i+1);
+				String str2 = mot.substring(i+1, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '>' && (mot.charAt(i+1) != '=' && mot.charAt(i-1) != '<') && mot.charAt(i-1) != ' ')
+			{
+				String str1 = mot.substring(0, i);
+				String str2 = mot.substring(i, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '<' && mot.charAt(i+1) != '=' && mot.charAt(i+1) != '>' && mot.charAt(i+1) != ' ')
+			{
+				String str1 = mot.substring(0, i+1);
+				String str2 = mot.substring(i+1, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '<' && mot.charAt(i+1) != '=' && mot.charAt(i+1) != '>' && mot.charAt(i-1) != ' ')
+			{
+				String str1 = mot.substring(0, i);
+				String str2 = mot.substring(i, mot.length());
+				mot = str1 +" "+str2;
+			}
+			
 			
 			i++;
 		}
