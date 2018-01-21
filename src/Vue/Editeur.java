@@ -18,9 +18,10 @@ import javax.swing.JTextArea;
 public class Editeur implements ActionListener,KeyListener{
 	private JTextArea Jtext ;
 	private JLabel Jlabel;
-	
+	private int xx;
 	public Editeur()
 	{
+		//gorbel
 		JFrame fenetre = new JFrame();
         fenetre.setTitle("Projet Compilation");
 	    fenetre.setSize(600, 250);
