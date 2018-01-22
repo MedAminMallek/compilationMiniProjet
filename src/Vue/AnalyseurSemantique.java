@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.jws.Oneway;
+
 public class AnalyseurSemantique {
 	
 	public String ErreurMsg="";
 	int labelP = 0;
 	int labelT = 0;
+	int labelTT = 0;
+	int label = 0;
+	String codeInter="";
 	
 	public int checkExpSimple(String expToCheck,ArrayList<Symbole> tabSymbole)
 	{
@@ -123,8 +128,11 @@ public class AnalyseurSemantique {
 					int temp=tabSymbole.indexOf(new Symbole("", s, "", ""));
 					if(temp!=-1)
 					{
-						if(tabSymbole.get(temp).getType().equals(""))
+						if(tabSymbole.get(temp).getType().equals("")){
 							tabSymbole.get(temp).setType(type);
+							codeInter+=temp+".Place := ALLOUER("+type+")\n";
+							codeInter+=temp+".Type := "+type+"\n";
+						}
 						else{
 							
 							ErreurMsg = "Erreur Semantique : Deux variables ont le meme ID '"+s+"' ligne "+lineDcl;
@@ -149,19 +157,59 @@ public class AnalyseurSemantique {
 				}else
 				{
 					//generate code
-					generateCodeInst(lesInst[instI].split("@")[0]);
+					codeInter+=generateCodeInst(lesInst[instI].split("@")[0],label);
+					
 				}
 			}
 				
 		}
+		System.out.println(codeInter);
 		return 1;
+	}
+	public ArrayList<String> generateFacteur3Adr(String inst)
+	{
+		String result="";
+		String[] termes = inst.split("\\*|\\/|\\&&");
+		if(termes.length>1)
+		{	
+			String[] sep = Editeur.addSpace(inst).split(" ");
+			AnalyseurLexical anl = new AnalyseurLexical();
+			ArrayList<String> lesAddOp = new ArrayList<>();
+			int indinceOpAdd = 0;
+			for(int i=0;i<sep.length;i++)
+			{
+				
+				if(anl.isOpmul(sep[i]))
+				{
+					lesAddOp.add(sep[i]);
+				}
+			}
+			for(int i=1;i<termes.length;i++)
+			{
+				result+="tempVar"+(labelTT)+" :="+termes[i-1]+" "+lesAddOp.get(indinceOpAdd)+" "+termes[i]+"\n";
+				termes[i]="tempVar"+(labelTT);
+				indinceOpAdd++;
+				labelTT++;
+			}
+			labelTT--;
+			ArrayList<String> arr = new ArrayList<>();
+			arr.add(result);
+			arr.add(termes[termes.length-1]);
+			return arr;
+		}else
+		{
+			ArrayList<String> arr = new ArrayList<>();
+			arr.add("");
+			arr.add(inst);
+			return arr;
+		}
 	}
 	public String generateTerme3Adr(String inst)
 	{
 		String r = inst.split(":=")[0];
 		String rest = inst.split(":=")[1];
 		String[] termes = rest.split("\\+|\\-|\\|\\|");
-		if(termes.length>2)
+		if(termes.length>=2)
 		{	
 			String[] sep = Editeur.addSpace(rest).split(" ");
 			AnalyseurLexical anl = new AnalyseurLexical();
@@ -178,51 +226,118 @@ public class AnalyseurSemantique {
 			String result="";
 			for(int i=1;i<termes.length;i++)
 			{
-				result+="tempVar"+(labelT)+" :="+termes[i-1]+" "+lesAddOp.get(indinceOpAdd)+" "+termes[i]+"\n";
+				ArrayList<String> arr1 = generateFacteur3Adr(termes[i-1]);
+				ArrayList<String> arr2 = generateFacteur3Adr(termes[i]);
+				result+=arr1.get(0);
+				result+=arr2.get(0);
+				result+="tempVar"+(labelT)+" :="+arr1.get(1)+" "+lesAddOp.get(indinceOpAdd)+" "+arr2.get(1)+"\n";
 				termes[i]="tempVar"+(labelT);
 				indinceOpAdd++;
 				labelT++;
 			}
 			labelT--;
-			return result+r+" := tempVar"+(labelT)+"\n";
+			return result+r+" := tempVar"+(labelT++)+"\n";
 		}else
 		{
-			return inst;
+			ArrayList<String> arr1 = generateFacteur3Adr(inst.split(":=")[1]);
+			return arr1.get(0)+"\n"+inst.split(":=")[0]+" := "+arr1.get(1);
 		}
 	}
-	public String deleteParenthese(String cond)
+	public ArrayList<String> deleteParenthese(String cond)
 	{
 		String resutl="";
 		int indice = 0;
 		int i =0;
 		cond = cond.replace(" ", "");
-		while(cond.contains("("))
-		{
-			if(cond.charAt(i) == '(')
-				indice = i;
-			if(cond.charAt(i)==')')
+		//if(cond.contains("(")){
+			while(cond.contains("("))
 			{
-				String part1 = cond.substring(0,indice);
-				String part2 = cond.substring(i+1, cond.length());
-				String part3 = cond.substring(indice+1,i);
-				resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part3);
-				cond = part1+"tp"+(labelP)+part2;
-				labelP++;
-				i=indice=0;
-			}else
-				i++;
+				if(cond.charAt(i) == '(')
+					indice = i;
+				if(cond.charAt(i)==')')
+				{
+					String part1 = cond.substring(0,indice);
+					String part2 = cond.substring(i+1, cond.length());
+					String part3 = cond.substring(indice+1,i);
+					resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part3)+"\n";
+					cond = part1+"tp"+(labelP)+part2;
+					labelP++;
+					i=indice=0;
+				}else
+					i++;
 			
-		}
-		
-		return Editeur.addSpace(resutl+cond);
+			}
+		//}else
+		//{
+			String[] tabtemp = Editeur.addSpace(cond).split(" ");
+			AnalyseurLexical anl = new AnalyseurLexical();
+			String oprel ="";
+			boolean separation = false;
+			
+			String part1 = "";
+			String part2 = "";
+			
+			for(int j=0;j<tabtemp.length;j++)
+			{
+				if(separation)
+				{
+					part2+= tabtemp[j]+" ";
+				}
+				if(anl.isOprel(tabtemp[j]))
+				{
+					separation = true;
+					oprel = tabtemp[j];
+				}
+				if(!separation)
+				{
+					part1+= tabtemp[j]+" ";
+				}
+			}
+			
+			resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part1);
+			resutl+=generateTerme3Adr("tp"+(labelP+1)+" := "+part2)+"\n";
+			cond = "tp"+(labelP)+oprel+"tp"+(labelP+1);
+			labelP+=2;
+		//}
+		ArrayList<String> arr = new ArrayList<>();
+		arr.add(Editeur.addSpace(resutl));
+		arr.add(Editeur.addSpace(cond));
+		return arr;
 	}
-	public String GenerateCodePartieDroite(String cond)
+	public ArrayList<String> deleteParenthese2(String cond)
 	{
-		
-		return "";
+		String resutl="";
+		int indice = 0;
+		int i =0;
+		cond = cond.replace(" ", "");
+			while(cond.contains("("))
+			{
+				if(cond.charAt(i) == '(')
+					indice = i;
+				if(cond.charAt(i)==')')
+				{
+					String part1 = cond.substring(0,indice);
+					String part2 = cond.substring(i+1, cond.length());
+					String part3 = cond.substring(indice+1,i);
+					resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part3)+"\n";
+					cond = part1+"tp"+(labelP)+part2;
+					labelP++;
+					i=indice=0;
+				}else
+					i++;
+			
+			}
+		resutl+=generateTerme3Adr("tp"+(labelP)+" := "+cond)+"\n";
+		cond = "tp"+(labelP);
+		labelP++;
+		ArrayList<String> arr = new ArrayList<>();
+		arr.add(Editeur.addSpace(resutl));
+		arr.add(Editeur.addSpace(cond));
+		return arr;
 	}
-	public String generateCodeInst(String inst)
+	public String generateCodeInst(String inst,int labelX)
 	{
+		String result = "";
 		String first =inst.split(" ")[1];
 		if(first.equals("if"))
 		{
@@ -231,24 +346,43 @@ public class AnalyseurSemantique {
 			int aux2 = inst.lastIndexOf("else")+4;
 			String inst1 = inst.substring(aux1,aux2-4);
 			String inst2 = inst.substring(aux2,inst.length());
-			System.out.println(deleteParenthese(cond));
-			return generateCodeInst(inst1)+"\n"+generateCodeInst(inst2);
+			ArrayList<String> arr = deleteParenthese(cond);
+			result+=arr.get(0);
+			result+="Si "+arr.get(1)+" aller à label"+labelX+"\n";
+			result+=generateCodeInst(inst2,labelX+1);
+			result+="aller à FinSi"+labelX+"\n";
+			result+="label"+labelX+":\n";
+			result+=generateCodeInst(inst1,labelX+1)+"\n";
+			result+="FinSi"+labelX+":\n";
+			labelX++;
+			return result;
 			
 		}else
 			if(first.equals("while"))
 			{
 				String cond = inst.split("while")[1].split("do")[0];
-				System.out.println(deleteParenthese(cond));
+				ArrayList<String> arr = deleteParenthese(cond);
 				int aux1 = inst.indexOf("do")+2;
-				String inst1 = inst.substring(aux1,inst.length());//inst.split("while")[1].split("do")[1];
-				return generateCodeInst(inst1);
+				String inst1 = inst.substring(aux1,inst.length());
+				result+=arr.get(0);
+				result+="boucle"+labelX+":\n";
+				result+="Si "+arr.get(1)+" aller à label"+labelX+"\n";
+				result+="aller à FinBoucle"+labelX+":\n";
+				result+="label"+labelX+":\n";
+				result+=generateCodeInst(inst1,labelX+1)+"\n";
+				result+="aller à boucle"+labelX+"\n";
+				result+="FinBoucle"+labelX+":\n";
+				labelX++;
+				return result;
 			}else
 				if(inst.contains(":="))
 				{
-					return inst;
+					ArrayList<String> arr = deleteParenthese2(inst.split(":=")[1]);
+					return arr.get(0)+"\n"+
+					inst.split(":=")[0]+" := "+arr.get(1);
 				}else
 				{
-					return inst;
+					return inst+"\n";
 				}
 		
 	}

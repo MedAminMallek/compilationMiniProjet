@@ -3,18 +3,17 @@ Dcl==>A'
 A'==>var Liste_id : Type ; A' 
 Liste_id==>id B' 
 B'==>, id B' 
-B'==>, id B' 
 B'==> 
 Type==>integer 
+A'==>var Liste_id : Type ; A' 
+Liste_id==>id B' 
+B'==> 
+Type==>char 
 A'==> 
 Inst_composée==>begin Inst end 
 Inst==>Liste_inst 
 Liste_inst==>I C' 
-I==>if Exp then I else I 
-Exp==>Exp_simple F' 
-Exp_simple==>Terme D' 
-Terme==>Facteur E' 
-Facteur==>( Exp_simple ) 
+I==>id := Exp_simple 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
 Facteur==>id 
@@ -22,19 +21,7 @@ E'==>
 D'==>opadd Terme D' 
 Terme==>Facteur E' 
 Facteur==>id 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
-Facteur==>id 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==> 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
+E'==>opmul Facteur E' 
 Facteur==>( Exp_simple ) 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
@@ -43,24 +30,9 @@ E'==>
 D'==>opadd Terme D' 
 Terme==>Facteur E' 
 Facteur==>nb 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
-Facteur==>( Exp_simple ) 
-Exp_simple==>Terme D' 
-Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==>opadd Terme D' 
-Terme==>Facteur E' 
+E'==>opmul Facteur E' 
+Facteur==>id 
+E'==>opmul Facteur E' 
 Facteur==>nb 
 E'==> 
 D'==>opadd Terme D' 
@@ -70,16 +42,6 @@ E'==>
 D'==> 
 E'==> 
 D'==> 
-E'==> 
-D'==> 
-F'==>oprel Exp_simple 
-Exp_simple==>Terme D' 
-Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==> 
-I==>read ( id ) 
-I==>write ( id ) 
 C'==> 
 
 
