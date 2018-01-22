@@ -293,11 +293,18 @@ public class AnalyseurSemantique {
 					part1+= tabtemp[j]+" ";
 				}
 			}
-			
+			if(cond.split(">=|<=|==|<>|<|>").length>1){
 			resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part1);
 			resutl+=generateTerme3Adr("tp"+(labelP+1)+" := "+part2)+"\n";
 			cond = "tp"+(labelP)+oprel+"tp"+(labelP+1);
 			labelP+=2;
+			}else
+			{
+				resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part1)+"\n";
+				cond = "tp"+(labelP);
+				labelP+=1;
+			}
+			
 		//}
 		ArrayList<String> arr = new ArrayList<>();
 		arr.add(Editeur.addSpace(resutl));
@@ -379,7 +386,7 @@ public class AnalyseurSemantique {
 				{
 					ArrayList<String> arr = deleteParenthese2(inst.split(":=")[1]);
 					return arr.get(0)+"\n"+
-					inst.split(":=")[0]+" := "+arr.get(1);
+					inst.split(":=")[0]+" := "+arr.get(1)+"\n";
 				}else
 				{
 					return inst+"\n";

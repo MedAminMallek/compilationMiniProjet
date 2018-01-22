@@ -42,6 +42,58 @@ E'==>
 D'==> 
 E'==> 
 D'==> 
+C'==>; I C' 
+I==>if Exp then I else I 
+Exp==>Exp_simple F' 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>( Exp_simple ) 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>id 
+E'==> 
+D'==>opadd Terme D' 
+Terme==>Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==>opadd Terme D' 
+Terme==>Facteur E' 
+Facteur==>id 
+E'==> 
+D'==>opadd Terme D' 
+Terme==>Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==> 
+E'==>opmul Facteur E' 
+Facteur==>nb 
+E'==>opmul Facteur E' 
+Facteur==>nb 
+E'==>opmul Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==> 
+F'==>oprel Exp_simple 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==> 
+I==>while Exp do I 
+Exp==>Exp_simple F' 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>id 
+E'==> 
+D'==> 
+F'==>oprel Exp_simple 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>id 
+E'==> 
+D'==> 
+I==>read ( id ) 
+I==>write ( id ) 
 C'==> 
 
 

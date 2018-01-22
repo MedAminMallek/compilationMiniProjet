@@ -1,7 +1,7 @@
 ID= [xx, x, x1, c]
-NB= [9, 5]
-MotCle= [program, ;, var, ,, :, integer, char, begin, :=, (, ), end, .]
-OPREL= []
+NB= [9, 5, 4, 6, 569]
+MotCle= [program, ;, var, ,, :, integer, char, begin, :=, (, ), if, then, while, do, read, else, write, end, .]
+OPREL= [>=, ==]
 OPADD= [+, -]
-OPMUL= [*, &&]
+OPMUL= [*, &&, /]
 
