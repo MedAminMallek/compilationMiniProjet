@@ -4,47 +4,68 @@ A'==>var Liste_id : Type ; A'
 Liste_id==>id B' 
 B'==> 
 Type==>integer 
-A'==>var Liste_id : Type ; A' 
-Liste_id==>id B' 
-B'==> 
-Type==>char 
 A'==> 
 Inst_composée==>begin Inst end 
 Inst==>Liste_inst 
 Liste_inst==>I C' 
-I==>if Exp then I else I 
+I==>while Exp do I 
 Exp==>Exp_simple F' 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
-Facteur==>id 
+Facteur==>nb 
 E'==> 
 D'==> 
 F'==>oprel Exp_simple 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
-Facteur==>nb 
-E'==> 
-D'==>opadd Terme D' 
+Facteur==>( Exp_simple ) 
+Exp_simple==>Terme D' 
 Terme==>Facteur E' 
 Facteur==>id 
 E'==> 
 D'==>opadd Terme D' 
 Terme==>Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==> 
+E'==> 
+D'==> 
+I==>while Exp do I 
+Exp==>Exp_simple F' 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>nb 
+E'==> 
+D'==> 
+F'==>oprel Exp_simple 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
+Facteur==>( Exp_simple ) 
+Exp_simple==>Terme D' 
+Terme==>Facteur E' 
 Facteur==>id 
+E'==>opmul Facteur E' 
+Facteur==>nb 
 E'==> 
 D'==> 
-I==>id := Exp_simple 
+E'==> 
+D'==> 
+I==>while Exp do I 
+Exp==>Exp_simple F' 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
 Facteur==>nb 
 E'==> 
 D'==> 
-I==>id := Exp_simple 
+F'==>oprel Exp_simple 
 Exp_simple==>Terme D' 
 Terme==>Facteur E' 
+Facteur==>id 
+E'==>opmul Facteur E' 
 Facteur==>nb 
 E'==> 
 D'==> 
+I==>read ( id ) 
 C'==> 
 
 

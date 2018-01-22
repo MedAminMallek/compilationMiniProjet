@@ -7,7 +7,7 @@ import java.util.Set;
 public class AnalyseurSemantique {
 	
 	public String ErreurMsg="";
-	
+	int labelP = 0;
 	
 	public int checkExpSimple(String expToCheck,ArrayList<Symbole> tabSymbole)
 	{
@@ -145,11 +145,85 @@ public class AnalyseurSemantique {
 				if(checkInst(lesInst[instI], tabSymbole)==-1)
 				{
 					return -1;
+				}else
+				{
+					//generate code
+					generateCodeInst(lesInst[instI].split("@")[0]);
 				}
 			}
 				
 		}
 		return 1;
+	}
+	public String generateTerme3Adr(String inst)
+	{
+		String r = inst.split(":=")[0];
+		String rest = inst.split(":=")[1];
+		String[] termes = rest.split("\\+|\\-|\\|\\|");
+		
+		return "";
+	}
+	public String deleteParenthese(String cond)
+	{
+		String resutl="";
+		int indice = 0;
+		int i =0;
+		cond = cond.replace(" ", "");
+		while(cond.contains("("))
+		{
+			if(cond.charAt(i) == '(')
+				indice = i;
+			if(cond.charAt(i)==')')
+			{
+				String part1 = cond.substring(0,indice);
+				String part2 = cond.substring(i+1, cond.length());
+				String part3 = cond.substring(indice+1,i);
+				resutl+="tp"+(labelP)+":="+part3+"\n";
+				cond = part1+"tp"+(labelP)+part2;
+				labelP++;
+				i=indice=0;
+			}else
+				i++;
+			
+		}
+		
+		return Editeur.addSpace(resutl+cond);
+	}
+	public String GenerateCodePartieDroite(String cond)
+	{
+		
+		return "";
+	}
+	public String generateCodeInst(String inst)
+	{
+		String first =inst.split(" ")[1];
+		if(first.equals("if"))
+		{
+			String cond = inst.split("if")[1].split("then")[0];
+			int aux1 = inst.indexOf("then")+4;
+			int aux2 = inst.lastIndexOf("else")+4;
+			String inst1 = inst.substring(aux1,aux2-4);
+			String inst2 = inst.substring(aux2,inst.length());
+			System.out.println(deleteParenthese(cond));
+			return generateCodeInst(inst1)+"\n"+generateCodeInst(inst2);
+			
+		}else
+			if(first.equals("while"))
+			{
+				String cond = inst.split("while")[1].split("do")[0];
+				System.out.println(deleteParenthese(cond));
+				int aux1 = inst.indexOf("do")+2;
+				String inst1 = inst.substring(aux1,inst.length());//inst.split("while")[1].split("do")[1];
+				return generateCodeInst(inst1);
+			}else
+				if(inst.contains(":="))
+				{
+					return inst;
+				}else
+				{
+					return inst;
+				}
+		
 	}
 	public boolean isNumeric(String str)
 	{
@@ -176,12 +250,12 @@ public class AnalyseurSemantique {
 				if(sousInst[i].contains("if") || sousInst[i].contains("while"))
 				{
 					String exp = sousInst[i].replaceAll(" ", "").split("if|while")[1];
-					String[] exp_simple = exp.split("<|>|>=|<=|==|<>");
+					String[] exp_simple = exp.split(">=|<=|==|<>|<|>");
 					Set<String> lesTypesDesExp_simples = new HashSet();
 					for(int j=0;j<exp_simple.length;j++)
 					{
 						int temp = checkExp_simple(exp_simple[j], tabSymbole);
-						System.out.println(exp_simple[j]+ " temp = "+temp);
+						//System.out.println(exp_simple[j]+ " temp = "+temp);
 						if(temp == -1)
 						{
 							ErreurMsg+=" "+ligneCourante;
@@ -262,20 +336,18 @@ public class AnalyseurSemantique {
 			}
 			
 		}
-		for(String xxx : set)
-			System.out.print(xxx +" **");
-		System.out.println();
 		if(set.size()==2)				
 			return 2;
 		else
 		{
-			if(set.contains("char")) // hello
+			if(set.contains("char"))
 				return 2;
 			else
 				return 1;
-		}
-		
+		}	
 	}
+	
+	
 	
 
 }

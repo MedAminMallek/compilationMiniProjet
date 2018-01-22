@@ -18,10 +18,9 @@ import javax.swing.JTextArea;
 public class Editeur implements ActionListener,KeyListener{
 	private JTextArea Jtext ;
 	private JLabel Jlabel;
-	private int xx;
+	
 	public Editeur()
 	{
-		//gorbel
 		JFrame fenetre = new JFrame();
         fenetre.setTitle("Projet Compilation");
 	    fenetre.setSize(600, 250);
@@ -60,7 +59,7 @@ public class Editeur implements ActionListener,KeyListener{
 		return txt;
 	}
 	
-	public String addSpace(String mot)
+	public static String addSpace(String mot)
 	{
 		ArrayList<String> cle = new ArrayList<>();
 		cle.add(";");
@@ -71,8 +70,8 @@ public class Editeur implements ActionListener,KeyListener{
 		cle.add("-");
 		cle.add("/");
 		cle.add("%");
-		cle.add("<");
-		cle.add(">");
+		//cle.add("<");
+		//cle.add(">");
 		cle.add(",");
 		
 		cle.add(":=");
@@ -92,7 +91,6 @@ public class Editeur implements ActionListener,KeyListener{
 				String str1 = mot.substring(0, i);
 				String str2 = mot.substring(i, mot.length());
 				mot = str1 +" "+str2;
-				//System.out.println(mot+"\n **1");
 			}else
 			{
 				String x =""+mot.charAt(i)+mot.charAt(i+1);
@@ -101,7 +99,6 @@ public class Editeur implements ActionListener,KeyListener{
 					String str1 = mot.substring(0, i);
 					String str2 = mot.substring(i, mot.length());
 					mot = str1 +" "+str2;
-					//System.out.println(mot+"\n **2");
 				}
 			}
 			if(cle.contains(xx) && mot.charAt(i+1)!=' ')
@@ -118,7 +115,6 @@ public class Editeur implements ActionListener,KeyListener{
 					String str1 = mot.substring(0, i+2);
 					String str2 = mot.substring(i+2, mot.length());
 					mot = str1 +" "+str2;
-					//System.out.println(mot+"\n **4");
 				}
 			}
 			if(mot.charAt(i) == ':' && mot.charAt(i+1) != '=' && mot.charAt(i+1) != ' ')
@@ -128,6 +124,30 @@ public class Editeur implements ActionListener,KeyListener{
 				mot = str1 +" "+str2;
 			}
 			if(mot.charAt(i) == ':' && mot.charAt(i-1) != '=' && mot.charAt(i-1) != ' ')
+			{
+				String str1 = mot.substring(0, i);
+				String str2 = mot.substring(i, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '>' && mot.charAt(i+1) != '=' && mot.charAt(i+1) != ' ')
+			{
+				String str1 = mot.substring(0, i+1);
+				String str2 = mot.substring(i+1, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '>' && mot.charAt(i-1) != '<' && mot.charAt(i-1) != ' ')
+			{
+				String str1 = mot.substring(0, i);
+				String str2 = mot.substring(i, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '<' && mot.charAt(i+1) != '=' && mot.charAt(i+1) != '>' && mot.charAt(i+1) != ' ')
+			{
+				String str1 = mot.substring(0, i+1);
+				String str2 = mot.substring(i+1, mot.length());
+				mot = str1 +" "+str2;
+			}
+			if(mot.charAt(i) == '<' && mot.charAt(i-1) != ' '&& mot.charAt(i-1)!='=')
 			{
 				String str1 = mot.substring(0, i);
 				String str2 = mot.substring(i, mot.length());
