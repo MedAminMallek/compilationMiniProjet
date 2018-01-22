@@ -83,7 +83,7 @@ public class Editeur implements ActionListener,KeyListener{
 		cle.add("==");
 		
 		int i = 1;
-		while(i<mot.length()-2)
+		while(i<mot.length()-1)
 		{
 			String xx =""+mot.charAt(i);
 			if(cle.contains(xx) && mot.charAt(i-1)!=' ')

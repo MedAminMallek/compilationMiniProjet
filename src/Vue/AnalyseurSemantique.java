@@ -8,6 +8,7 @@ public class AnalyseurSemantique {
 	
 	public String ErreurMsg="";
 	int labelP = 0;
+	int labelT = 0;
 	
 	public int checkExpSimple(String expToCheck,ArrayList<Symbole> tabSymbole)
 	{
@@ -160,8 +161,34 @@ public class AnalyseurSemantique {
 		String r = inst.split(":=")[0];
 		String rest = inst.split(":=")[1];
 		String[] termes = rest.split("\\+|\\-|\\|\\|");
-		
-		return "";
+		if(termes.length>2)
+		{	
+			String[] sep = Editeur.addSpace(rest).split(" ");
+			AnalyseurLexical anl = new AnalyseurLexical();
+			ArrayList<String> lesAddOp = new ArrayList<>();
+			int indinceOpAdd = 0;
+			for(int i=0;i<sep.length;i++)
+			{
+				
+				if(anl.isOpadd(sep[i]))
+				{
+					lesAddOp.add(sep[i]);
+				}
+			}
+			String result="";
+			for(int i=1;i<termes.length;i++)
+			{
+				result+="tempVar"+(labelT)+" :="+termes[i-1]+" "+lesAddOp.get(indinceOpAdd)+" "+termes[i]+"\n";
+				termes[i]="tempVar"+(labelT);
+				indinceOpAdd++;
+				labelT++;
+			}
+			labelT--;
+			return result+r+" := tempVar"+(labelT)+"\n";
+		}else
+		{
+			return inst;
+		}
 	}
 	public String deleteParenthese(String cond)
 	{
@@ -178,7 +205,7 @@ public class AnalyseurSemantique {
 				String part1 = cond.substring(0,indice);
 				String part2 = cond.substring(i+1, cond.length());
 				String part3 = cond.substring(indice+1,i);
-				resutl+="tp"+(labelP)+":="+part3+"\n";
+				resutl+=generateTerme3Adr("tp"+(labelP)+" := "+part3);
 				cond = part1+"tp"+(labelP)+part2;
 				labelP++;
 				i=indice=0;
